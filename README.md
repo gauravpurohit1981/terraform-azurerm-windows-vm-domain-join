@@ -67,20 +67,6 @@ module "domain_join" {
   tags                  = module.rg.rg_tags
 }
 
-module "domain_join_with_lookup" {
-  source = "registry.terraform.io/libre-devops/windows-vm-domain-join/azurerm"
-
-  attempt_restart       = "true"
-  domain_admin_password = data.azurerm_key_vault_secret.mgmt_local_admin_pwd.value
-  domain_admin_username = "LibreDevOpsAdmin"
-  domain_name           = "libredevops.org"
-  ou_path               = "OU=${title(terraform.workspace)},OU=Customers,OU=Computers,DC=libredevops,DC=org"
-  tags                  = module.rg.rg_tags
-
-  lookup_vm_id          = true
-  vm_name               = "vmlbdouksprd01"
-  rg_name               = "rg-lbdo-uks-prd-01"
-}
 ```
 
 ## Requirements

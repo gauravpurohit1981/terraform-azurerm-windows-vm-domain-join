@@ -19,21 +19,9 @@ variable "domain_name" {
   description = "The domain name of the domain you are trying to join, e.g. libredevops.org"
 }
 
-variable "lookup_vm_id" {
-  type        = bool
-  description = "If a data source should be called to get the VM Id for you"
-  default     = false
-}
-
 variable "ou_path" {
   type        = string
   description = "The LDAP settings of the OU and groups of where you want this VM to be placed"
-}
-
-variable "rg_name" {
-  description = "The name of the resource group, this module does not create a resource group, it is expecting the value of a resource group already exists"
-  type        = string
-  default     = null
 }
 
 variable "tags" {
@@ -48,11 +36,5 @@ variable "tags" {
 variable "vm_id" {
   type        = string
   description = "The id of the virtual machine(s)"
-  default     = null
-}
-
-variable "vm_name" {
-  type        = string
-  description = "If lookup_vm_id is true, VM name must be set and the VM name must be provider"
   default     = null
 }
