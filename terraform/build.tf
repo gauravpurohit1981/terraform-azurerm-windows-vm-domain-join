@@ -62,6 +62,6 @@ module "domain_join" {
   domain_admin_username = "LibreDevOpsAdmin"
   domain_name           = "libredevops.org"
   ou_path               = "OU=${title(terraform.workspace)},OU=Customers,OU=Computers,DC=libredevops,DC=org"
-  vm_id                 = element(values(module.win_vm_simple.vm_ids), 0)
+  vm_id                 = element(module.win_vm_simple.vm_ids, 0)
   tags                  = module.rg.rg_tags
 }
