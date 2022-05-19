@@ -1,19 +1,3 @@
-```hcl
-module "plan" {
-  source = "registry.terraform.io/libre-devops/service-plan/azurerm"
-
-  rg_name  = module.rg.rg_name
-  location = module.rg.rg_location
-  tags     = module.rg.rg_tags
-  
-  app_service_plan_name          = "plan-${var.short}-${var.loc}-${terraform.workspace}-01"
-  add_to_app_service_environment = false
-  
-  os_type  = "Linux"
-  sku_name = "Y1"
-}
-```
-
 ## Requirements
 
 No requirements.

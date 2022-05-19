@@ -1,18 +1,33 @@
-variable "identity_ids" {
-  description = "Specifies a list of user managed identity ids to be assigned to the VM."
-  type        = list(string)
-  default     = []
+variable "attempt_restart" {
+  type        = string
+  description = "Should this extension attempt a restart of the VM? This is recommended"
 }
 
-variable "identity_type" {
-  description = "The Managed Service Identity Type of this Virtual Machine."
+variable "domain_admin_password" {
   type        = string
-  default     = ""
+  description = "The domain admin password who has permission or delegation to perform the domain join"
 }
 
-variable "location" {
-  description = "The location for this resource to be put in"
+variable "domain_admin_username" {
   type        = string
+  description = "The domain admin username who has permission or delegation to perform the domain join"
+  sensitive   = true
+}
+
+variable "domain_name" {
+  type        = string
+  description = "The domain name of the domain you are trying to join, e.g. libredevops.org"
+}
+
+variable "lookup_vm_id" {
+  type        = string
+  description = "If a data source should be called to get the VM Id for you"
+  default     = false
+}
+
+variable "ou_path" {
+  type        = string
+  description = "The LDAP settings of the OU and groups of where you want this VM to be placed"
 }
 
 variable "rg_name" {
@@ -31,4 +46,14 @@ variable "tags" {
   default = {
     source = "terraform"
   }
+}
+
+variable "vm_id" {
+  type        = string
+  description = "The id of the virtual machine(s)"
+}
+
+variable "vm_name" {
+  type        = string
+  description = "If lookup_vm_id is true, VM name must be set and the VM name must be provider"
 }
