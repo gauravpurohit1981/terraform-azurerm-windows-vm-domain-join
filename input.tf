@@ -52,9 +52,11 @@ variable "tags" {
 variable "vm_id" {
   type        = string
   description = "The id of the virtual machine(s)"
+  default     = null
 }
 
 variable "vm_name" {
   type        = string
   description = "If lookup_vm_id is true, VM name must be set and the VM name must be provider"
+  default     = null
 }
