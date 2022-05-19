@@ -20,7 +20,7 @@ variable "domain_name" {
 }
 
 variable "lookup_vm_id" {
-  type        = string
+  type        = bool
   description = "If a data source should be called to get the VM Id for you"
   default     = false
 }
@@ -33,6 +33,7 @@ variable "ou_path" {
 variable "rg_name" {
   description = "The name of the resource group, this module does not create a resource group, it is expecting the value of a resource group already exists"
   type        = string
+  default     = null
   validation {
     condition     = length(var.rg_name) > 1 && length(var.rg_name) <= 24
     error_message = "Resource group name is not valid."

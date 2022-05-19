@@ -53,3 +53,15 @@ module "win_vm_simple" {
   storage_account_type = "Standard_LRS"
   identity_type        = "SystemAssigned"
 }
+
+module "domain_join" {
+  source = "registry.terraform.io/libre-devops/windows-vm-domain-join/azurerm"
+
+  attempt_restart       = "true"
+  domain_admin_password = data.azurerm_key_vault_secret.mgmt_local_admin_pwd.value
+  domain_admin_username = "LibreDevOpsAdmin"
+  domain_name           = "libredevops.org"
+  ou_path               = "OU=${title(terraform.workspace)},OU=Customers,OU=Computers,DC=libredevops,DC=org"
+  vm_id                 = element(values(module.win_vm_simple.vm_ids), 0)
+  tags                  = module.rg.rg_tags
+}
