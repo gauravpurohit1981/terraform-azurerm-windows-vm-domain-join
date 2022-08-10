@@ -1,7 +1,7 @@
 module "rg" {
   source = "registry.terraform.io/libre-devops/rg/azurerm"
 
-  rg_name  = "rg-${var.short}-${var.loc}-${terraform.workspace}-build" // rg-ldo-euw-dev-build
+  rg_name  = "rg-${var.short}-${var.loc}-${terraform.workspace}-build" // rg-sunaj-uks-dev-build
   location = local.location                                            // compares var.loc with the var.regions var to match a long-hand name, in this case, "euw", so "westeurope"
   tags     = local.tags
 
@@ -11,11 +11,11 @@ module "rg" {
 module "network" {
   source = "registry.terraform.io/libre-devops/network/azurerm"
 
-  rg_name  = module.rg.rg_name // rg-ldo-euw-dev-build
+  rg_name  = module.rg.rg_name // rg-sunaj-uks-dev-build
   location = module.rg.rg_location
   tags     = local.tags
 
-  vnet_name     = "vnet-${var.short}-${var.loc}-${terraform.workspace}-01" // vnet-ldo-euw-dev-01
+  vnet_name     = "vnet-${var.short}-${var.loc}-${terraform.workspace}-01" // vnet-sunaj-uks-dev-01
   vnet_location = module.network.vnet_location
 
   address_space   = ["10.0.0.0/16"]
@@ -48,10 +48,26 @@ module "win_vm_simple" {
   admin_username = "LibreDevOpsAdmin"
   admin_password = data.azurerm_key_vault_secret.mgmt_local_admin_pwd.value // Created with the Libre DevOps Terraform Pre-Requisite script
 
-  subnet_id            = element(values(module.network.subnets_ids), 0) // Places in sn1-vnet-ldo-euw-dev-01
+  subnet_id            = element(values(module.network.subnets_ids), 0) // Places in sn1-vnet-sunaj-uks-dev-01
   availability_zone    = "alternate"                                    // If more than 1 VM exists, places them in alterate zones, 1, 2, 3 then resetting.  If you want HA, use an availability set.
   storage_account_type = "Standard_LRS"
   identity_type        = "SystemAssigned"
+}
+# Virtual Machine Extension
+resource "azurerm_virtual_machine_extension" "iis" {
+  name                 = "install-iis"
+  resource_group_name  = module.rg.rg_name
+  location             = module.rg.rg_location
+  virtual_machine_name = "${var.vmname}"
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.9"
+
+  settings = <<SETTINGS
+    { 
+      "commandToExecute": "powershell Add-WindowsFeature Web-Asp-Net45;Add-WindowsFeature NET-Framework-45-Core;Add-WindowsFeature Web-Net-Ext45;Add-WindowsFeature Web-ISAPI-Ext;Add-WindowsFeature Web-ISAPI-Filter;Add-WindowsFeature Web-Mgmt-Console;Add-WindowsFeature Web-Scripting-Tools;Add-WindowsFeature Search-Service;Add-WindowsFeature Web-Filtering;Add-WindowsFeature Web-Basic-Auth;Add-WindowsFeature Web-Windows-Auth;Add-WindowsFeature Web-Default-Doc;Add-WindowsFeature Web-Http-Errors;Add-WindowsFeature Web-Static-Content;"
+    } 
+SETTINGS
 }
 
 module "domain_join" {
@@ -60,7 +76,7 @@ module "domain_join" {
   attempt_restart       = "true"
   domain_admin_password = data.azurerm_key_vault_secret.mgmt_local_admin_pwd.value
   domain_admin_username = "LibreDevOpsAdmin"
-  domain_name           = "libredevops.org"
+  domain_name           = "janus-reporting.co.uk"
   ou_path               = "OU=${title(terraform.workspace)},OU=Customers,OU=Computers,DC=libredevops,DC=org"
   vm_id                 = element(module.win_vm_simple.vm_ids, 0)
   tags                  = module.rg.rg_tags
